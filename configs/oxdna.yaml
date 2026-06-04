@@ -1,0 +1,46 @@
+data:
+  data_dir: /scratch/sroy85/fastDNA/oxdna_zarr_dataset
+  initial_group: initial
+  target_group: target
+  max_structures: 64
+  max_nucleotides: 256
+  min_nucleotides: 1
+  frame_strategy: random
+  center: true
+  random_rotate: true
+
+model:
+  hidden_dim: 128
+  num_layers: 4
+  num_heads: 4
+  base_embed_dim: 32
+  dropout: 0.0
+  conditional_prior_gamma: 0.25
+  position_noise_scale: 1.0
+  self_condition: false
+  position_loss_weight: 1.0
+  orientation_loss_weight: 0.25
+  bond_loss_weight: 0.05
+  target_bond_length: 0.6
+
+training:
+  epochs: 20
+  batch_size: 4
+  lr: 0.0001
+  weight_decay: 0.000001
+  grad_clip: 1.0
+  val_fraction: 0.1
+  seed: 7
+  num_workers: 0
+  save_every: 5
+  checkpoint_dir: checkpoints/oxdna
+  limit_batches:
+
+sampling:
+  num_steps: 50
+  output: outputs/oxdna_samples.npz
+
+evaluation:
+  target_bond_length: 0.6
+  bond_tolerance: 0.15
+  run_energy: false
