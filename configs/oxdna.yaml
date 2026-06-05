@@ -1,5 +1,5 @@
 data:
-  data_dir: /scratch/sroy85/fastDNA/oxdna_zarr_dataset
+  data_dir: /scratch/sroy85/fastDNA/oxdna_zarr_dataset_full
   initial_group: initial
   target_group: target
   max_structures: 64

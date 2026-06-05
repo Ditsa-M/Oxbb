@@ -41,7 +41,7 @@ unset PYTHONPATH
 ```bash
 python scripts/train_oxdna_flow.py \
   --config configs/oxdna.yaml \
-  --data_dir /scratch/sroy85/fastDNA/oxdna_zarr_dataset \
+  --data_dir /scratch/sroy85/fastDNA/oxdna_zarr_dataset_full \
   --max_nucleotides 256
 ```
 
@@ -51,16 +51,20 @@ For a smoke run:
 python scripts/train_oxdna_flow.py --limit_batches 2 --epochs 1
 ```
 
-The large `/scratch/sroy85/fastDNA/oxdna_zarr_dataset` examples include full
-origami-scale structures. For the first duplex/hairpin target, keep
-`max_nucleotides` low or point `data_dir` to a filtered short-system zarr set.
+The corrected fastDNA dataset is
+`/scratch/sroy85/fastDNA/oxdna_zarr_dataset_full`, generated from
+`/scratch/sroy85/oxDNN2/output`. The older
+`/scratch/sroy85/fastDNA/oxdna_zarr_dataset` directory exists as a fallback but
+is not the preferred training source. Many examples are full-origami-scale, so
+for the first duplex/hairpin target keep `max_nucleotides` low or point
+`data_dir` to a filtered short-system zarr set.
 
 ## Sample
 
 ```bash
 python scripts/sample_oxdna_flow.py \
   --checkpoint checkpoints/oxdna/latest.pt \
-  --data_dir /scratch/sroy85/fastDNA/oxdna_zarr_dataset \
+  --data_dir /scratch/sroy85/fastDNA/oxdna_zarr_dataset_full \
   --output outputs/oxdna_samples.npz
 ```
 

@@ -38,18 +38,71 @@ Add new oxDNA-specific code in clearly named modules. Prefer names such as
 `oxdna_eval.py`, or `configs/oxdna_*.yaml`. Avoid vague names such as
 `utils2.py`, `new_model.py`, or `train_final.py`.
 
+## fastDNA Alignment
+
+This repository is a clean oxBB project, but it should track the active DNA
+guidance from `/scratch/sroy85/fastDNA/AGENTS.md`. This section was reviewed
+against fastDNA on 2026-06-04. The relevant fastDNA guidance as of that review
+is:
+
+- The active upstream DNA project there is `flowDNA/`.
+- The old protein BBFlow checkout under fastDNA is a reference for flow-matching
+  ideas, not the source tree to edit for oxBB.
+- The corrected oxDNA source root is `/scratch/sroy85/oxDNN2/output`.
+- Do not regenerate data from `/scratch/sroy85/oxDNN/output`; that was the old,
+  mistaken source.
+- The preferred corrected zarr dataset under fastDNA is
+  `/scratch/sroy85/fastDNA/oxdna_zarr_dataset_full`.
+- `/scratch/sroy85/fastDNA/oxdna_zarr_dataset` exists, but should be treated as
+  an older fallback unless a task explicitly asks for it.
+- oxDNN2 trajectory files may be `OXD\x01` zstd-compressed oxDNA trajectories;
+  do not parse those trajectory files as plain UTF-8 text.
+- `last_conf.dat` files are ASCII single-configuration files.
+- Replica directories `0`, `1`, `2`, and `3` should be treated as independent
+  replicas, not merged into one structure.
+- For each replica, concatenate available trajectories in this order when
+  generating paired/full zarr data: `trajectoryMC.dat`, `trajectoryRelax.dat`,
+  then `trajectory.dat`.
+- Production trajectories may be absent for simulations that are still running;
+  converters should still process MC/Relax data and record which stages were
+  present.
+- The current fastDNA paired schema stores `initial/` and `target/` groups with
+  `positions`, `orientations`, and `bases`, plus provenance attributes such as
+  `simulation`, `replica`, `num_nucleotides`, `num_frames`, `trajectories`,
+  `trajectory_order`, `pair_stride`, `num_pairs`, and
+  `schema = "paired_initial_target"`.
+- The fastDNA environment notes reported `torch 2.8.0+cu128`, `zarr 3.2.1`, and
+  `zstandard` as available, while `pytorch_lightning` was fragile/missing in the
+  bare environment.
+
+Keep this file updated if fastDNA changes its active dataset, schema, or
+training workflow. When this repo disagrees with fastDNA, prefer the current
+fastDNA data provenance rules unless there is an explicit oxBB reason not to.
+
 ## Data Assumptions
 
-The main external dataset currently lives at:
+The main external workspace currently lives at:
 
 ```text
 /scratch/sroy85/fastDNA
 ```
 
+The preferred paired zarr dataset currently lives at:
+
+```text
+/scratch/sroy85/fastDNA/oxdna_zarr_dataset_full
+```
+
+The older fallback paired zarr dataset lives at:
+
+```text
+/scratch/sroy85/fastDNA/oxdna_zarr_dataset
+```
+
 The observed paired zarr dataset layout includes stores such as:
 
 ```text
-/scratch/sroy85/fastDNA/oxdna_zarr_dataset/<name>.zarr/
+/scratch/sroy85/fastDNA/oxdna_zarr_dataset_full/<name>.zarr/
   initial/
     positions/
     orientations/
@@ -70,6 +123,13 @@ bases/
 strands/
 bonding/
 ```
+
+The fastDNA paired schema may include metadata such as `simulation`, `replica`,
+`num_nucleotides`, `num_frames`, `trajectories`, `trajectory_order`,
+`pair_stride`, `num_pairs`, and `schema = "paired_initial_target"`. The oxBB
+loader should not require all metadata for basic loading, but new converters
+should preserve useful provenance when available. If adding a converter here,
+follow fastDNA's corrected oxDNN2 provenance and trajectory order.
 
 The loader must support both naming conventions when reasonable. The current
 model should train on paired initial/target conformations and should support
