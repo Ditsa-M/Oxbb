@@ -21,6 +21,11 @@ to a plausible relaxed conformation or ensemble.
   optional energy integration.
 - `configs/oxdna.yaml`: default training config aimed at short systems.
 
+## Slides
+
+Open `docs/bbflow-update-slides.html` in a browser for a slide report on how the
+existing flow baseline was updated into the current BBFlow-style oxDNA model.
+
 ## Setup
 
 Use a Python environment with PyTorch and zarr:

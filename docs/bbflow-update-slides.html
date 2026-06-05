@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>oxBB Flow Update Slides</title>
+  <style>
+    :root {
+      --ink: #14211f;
+      --muted: #5b6762;
+      --paper: #f7f7f2;
+      --panel: #ffffff;
+      --line: #cfd8d2;
+      --green: #12795b;
+      --teal: #0c7f86;
+      --red: #b94637;
+      --gold: #b48718;
+      --blue: #315f9d;
+      --code: #22312e;
+      --shadow: 0 14px 40px rgba(20, 33, 31, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+      overflow: hidden;
+    }
+
+    .deck {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    .slide {
+      display: none;
+      min-height: calc(100vh - 58px);
+      padding: clamp(24px, 4vw, 56px);
+      align-items: stretch;
+    }
+
+    .slide.active {
+      display: grid;
+    }
+
+    .layout {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 28px;
+      align-content: center;
+    }
+
+    .two {
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 0.85fr);
+      align-items: center;
+    }
+
+    .three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .title {
+      max-width: 920px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: clamp(42px, 8vw, 88px);
+      line-height: 0.98;
+      font-weight: 850;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+      font-size: clamp(31px, 5vw, 56px);
+      line-height: 1.02;
+      font-weight: 820;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 780;
+    }
+
+    .lead {
+      max-width: 780px;
+      color: #31423d;
+      font-size: clamp(20px, 2.2vw, 30px);
+      line-height: 1.35;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .panel,
+    .metric,
+    .codebox {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .metric {
+      padding: 20px;
+      min-height: 170px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .metric strong {
+      font-size: 38px;
+      line-height: 1;
+      color: var(--green);
+    }
+
+    .list {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      position: relative;
+      padding-left: 26px;
+      color: #243631;
+      font-size: 19px;
+      line-height: 1.38;
+    }
+
+    .list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--teal);
+    }
+
+    .codebox {
+      padding: 18px;
+      color: #e9f2ee;
+      background: var(--code);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow: hidden;
+    }
+
+    .flow {
+      display: grid;
+      gap: 16px;
+    }
+
+    .node {
+      border: 1px solid var(--line);
+      border-left: 8px solid var(--green);
+      border-radius: 8px;
+      padding: 16px 18px;
+      background: #fff;
+    }
+
+    .node:nth-child(2) {
+      border-left-color: var(--blue);
+    }
+
+    .node:nth-child(3) {
+      border-left-color: var(--gold);
+    }
+
+    .node:nth-child(4) {
+      border-left-color: var(--red);
+    }
+
+    .arrow {
+      align-self: center;
+      color: var(--muted);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .compare .panel {
+      min-height: 320px;
+    }
+
+    .tagrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #20302c;
+      background: #f3f6f3;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .diagram {
+      min-height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, rgba(18, 121, 91, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(18, 121, 91, 0.08) 1px, transparent 1px),
+        #fff;
+      background-size: 34px 34px;
+      padding: 22px;
+      display: grid;
+      align-content: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .helix {
+      height: 170px;
+      position: relative;
+      margin: 10px 0;
+    }
+
+    .base {
+      position: absolute;
+      width: 42px;
+      height: 12px;
+      border-radius: 4px;
+      background: var(--teal);
+      transform-origin: center;
+    }
+
+    .base.alt {
+      background: var(--gold);
+    }
+
+    .axis {
+      position: absolute;
+      height: 2px;
+      background: var(--red);
+      transform-origin: left center;
+    }
+
+    .axis::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: -4px;
+      border-left: 8px solid var(--red);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+
+    .equation {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .term {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+      min-height: 86px;
+    }
+
+    .term b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--green);
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    .controls {
+      height: 58px;
+      border-top: 1px solid var(--line);
+      background: rgba(247, 247, 242, 0.95);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 0 clamp(14px, 3vw, 28px);
+    }
+
+    button {
+      width: 42px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--green);
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 999px;
+      background: #dfe6e1;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0;
+      background: var(--green);
+    }
+
+    .counter {
+      min-width: 70px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        overflow: auto;
+      }
+
+      .slide {
+        min-height: auto;
+        padding: 24px 16px 86px;
+      }
+
+      .two,
+      .three,
+      .compare,
+      .equation {
+        grid-template-columns: 1fr;
+      }
+
+      .equation .arrow {
+        transform: rotate(90deg);
+      }
+
+      .controls {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        background: #fff;
+      }
+
+      .deck {
+        display: block;
+      }
+
+      .slide,
+      .slide.active {
+        display: grid;
+        min-height: 100vh;
+        break-after: page;
+      }
+
+      .controls {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide active">
+      <div class="layout two">
+        <div class="title">
+          <p class="eyebrow">oxBB update report</p>
+          <h1>From an existing flow baseline to a BBFlow-style oxDNA model</h1>
+          <p class="lead">A concise report on the model conversion, data assumptions, validation path, and repository updates now in Oxbb.</p>
+          <div class="tagrow">
+            <span class="tag">conditional flow matching</span>
+            <span class="tag">oxDNA</span>
+            <span class="tag">endpoint denoising</span>
+            <span class="tag">a1/a3 orientation contract</span>
+          </div>
+        </div>
+        <div class="diagram" aria-label="DNA orientation diagram">
+          <h3>Model target</h3>
+          <p class="small">Generate relaxed oxDNA conformations from an initial or unrelaxed structure while preserving nucleotide positions, base identities, masks, and orientation axes.</p>
+          <div class="helix">
+            <span class="base" style="left: 28px; top: 22px; transform: rotate(-18deg);"></span>
+            <span class="base alt" style="left: 80px; top: 48px; transform: rotate(18deg);"></span>
+            <span class="base" style="left: 132px; top: 74px; transform: rotate(-18deg);"></span>
+            <span class="base alt" style="left: 184px; top: 100px; transform: rotate(18deg);"></span>
+            <span class="base" style="left: 236px; top: 126px; transform: rotate(-18deg);"></span>
+            <span class="axis" style="left: 34px; top: 38px; width: 70px; transform: rotate(-38deg);"></span>
+            <span class="axis" style="left: 190px; top: 118px; width: 78px; transform: rotate(-38deg);"></span>
+          </div>
+          <p class="small">The red arrows represent projected body axes, not decoration: valid a1/a3 vectors are part of the generated state.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout">
+        <p class="eyebrow">starting point</p>
+        <h2>The baseline was useful, but not enough for oxDNA generation.</h2>
+        <div class="compare">
+          <div class="panel">
+            <h3>Existing flow baseline</h3>
+            <ul class="list">
+              <li>Flow model ideas were available: noise, interpolation time, denoising, and sampling.</li>
+              <li>The baseline did not encode the oxDNA state contract directly.</li>
+              <li>Protein-frame assumptions were avoided instead of being copied into this repo.</li>
+              <li>The initial structure needed to become a first-class conditioning input.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>BBFlow-style direction</h3>
+            <ul class="list">
+              <li>Use a conditional prior that starts near the unrelaxed oxDNA structure.</li>
+              <li>Train an endpoint denoiser to predict the clean relaxed target.</li>
+              <li>Sample with a rectified-flow Euler update toward predicted endpoints.</li>
+              <li>Keep positions and orientations coupled throughout training and sampling.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout">
+        <p class="eyebrow">implementation path</p>
+        <h2>The model was refactored around a conditional endpoint prediction workflow.</h2>
+        <div class="flow">
+          <div class="node">
+            <h3>1. Build a conditional prior</h3>
+            <p class="small">Gaussian position noise and random orientation vectors are blended toward the initial oxDNA structure with `conditional_prior_gamma`.</p>
+          </div>
+          <div class="node">
+            <h3>2. Corrupt toward the relaxed target</h3>
+            <p class="small">A flow time `t` interpolates prior state to target state for positions and projected a1/a3 orientation vectors.</p>
+          </div>
+          <div class="node">
+            <h3>3. Predict the clean endpoint</h3>
+            <p class="small">The denoiser takes current state, initial state, base embeddings, masks, and time embedding, then outputs target positions and orientations.</p>
+          </div>
+          <div class="node">
+            <h3>4. Sample with Euler updates</h3>
+            <p class="small">The sampler repeatedly predicts the endpoint and advances the current state while re-projecting orientations after every step.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout">
+        <p class="eyebrow">flow equation</p>
+        <h2>The conversion is visible in the state transition.</h2>
+        <div class="equation">
+          <div class="term">
+            <b>prior</b>
+            z0 = noise mixed with initial structure
+          </div>
+          <div class="arrow">+</div>
+          <div class="term">
+            <b>time</b>
+            zt = (1 - t) z0 + t xtarget
+          </div>
+          <div class="arrow">-></div>
+          <div class="term">
+            <b>denoiser</b>
+            f(zt, initial, bases, t) predicts xtarget
+          </div>
+        </div>
+        <div class="codebox">sample_prior(batch)
+corrupt_batch(batch, t)
+OxdnaEndpointDenoiser(...)
+loss = position + orientation + backbone bond terms
+sample(): state += dt * (predicted_endpoint - state) / (1 - t)</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout two">
+        <div>
+          <p class="eyebrow">oxDNA-specific contract</p>
+          <h2>Orientations were made explicit instead of treating structure as positions only.</h2>
+          <ul class="list">
+            <li>Each nucleotide carries `a1` and `a3` body axes.</li>
+            <li>Generated axes are projected to unit length and mutual orthogonality.</li>
+            <li>A right-handed orientation frame is rebuilt from projected axes.</li>
+            <li>Projection happens after raw model output and after sampling updates.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Core helpers</h3>
+          <div class="codebox">project_a1_a3(a1, a3)
+frame_from_a1_a3(a1, a3)
+a1_a3_from_frame(orientation)
+orientation_quality(a1, a3, mask)</div>
+          <p class="small">This keeps downstream oxDNA analysis from receiving arbitrary six-dimensional orientation vectors.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout">
+        <p class="eyebrow">data path</p>
+        <h2>The loader now follows the corrected fastDNA oxDNN2 provenance.</h2>
+        <div class="three">
+          <div class="metric">
+            <strong>1</strong>
+            <h3>Preferred source</h3>
+            <p class="small">Use `/scratch/sroy85/fastDNA/oxdna_zarr_dataset_full` from `/scratch/sroy85/oxDNN2/output`.</p>
+          </div>
+          <div class="metric">
+            <strong>2</strong>
+            <h3>Paired schema</h3>
+            <p class="small">Support `initial/` and `target/` groups with positions, orientations, bases, and provenance metadata.</p>
+          </div>
+          <div class="metric">
+            <strong>3</strong>
+            <h3>Fallback schemas</h3>
+            <p class="small">Older `stage_0`, `stage_2`, `stage_3`, top-level bases, and `.conf` pairs remain supported where reasonable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout two">
+        <div>
+          <p class="eyebrow">model architecture</p>
+          <h2>The denoiser is compact, plain PyTorch, and trainable in the current repo.</h2>
+          <ul class="list">
+            <li>Base identities are embedded as categorical inputs.</li>
+            <li>Flow time uses sinusoidal embedding plus an MLP.</li>
+            <li>Input features include current state, conditioning state, base embedding, mask, and optional self-conditioning.</li>
+            <li>A Transformer encoder predicts endpoint positions and raw orientation vectors.</li>
+            <li>Orientation output is projected before returning `a1`, `a3`, and frame tensors.</li>
+          </ul>
+        </div>
+        <div class="diagram">
+          <div class="node"><h3>features</h3><p class="small">position_t, a1_t, a3_t, initial position, initial a1/a3, bases, time</p></div>
+          <div class="arrow">down</div>
+          <div class="node"><h3>Transformer trunk</h3><p class="small">masked sequence model over nucleotides</p></div>
+          <div class="arrow">down</div>
+          <div class="node"><h3>heads</h3><p class="small">position endpoint plus projected orientation endpoint</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout">
+        <p class="eyebrow">validation</p>
+        <h2>Evaluation moved beyond loss curves.</h2>
+        <div class="three">
+          <div class="metric">
+            <strong>shape</strong>
+            <h3>Sample contract</h3>
+            <p class="small">Generated positions and orientation arrays are checked against the reference batch.</p>
+          </div>
+          <div class="metric">
+            <strong>rmsd</strong>
+            <h3>Centroid metrics</h3>
+            <p class="small">Generated samples are compared to ensemble centroids with raw and aligned RMSD.</p>
+          </div>
+          <div class="metric">
+            <strong>axes</strong>
+            <h3>Orientation metrics</h3>
+            <p class="small">Unit norms, a1/a3 orthogonality, finite values, and backbone bond lengths are reported.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout">
+        <p class="eyebrow">files updated</p>
+        <h2>The repo now separates data, geometry, model, training, sampling, and reporting concerns.</h2>
+        <div class="codebox">src/oxbb/oxdna_dataset.py       paired zarr and .conf loading, masks, padding, filtering
+src/oxbb/oxdna_geometry.py      a1/a3 projection, frame conversion, RMSD, bond lengths
+src/oxbb/oxdna_flow_model.py    BBFlow-style conditional endpoint flow model
+src/oxbb/oxdna_eval.py          generated sample metrics and optional energy hook
+scripts/train_oxdna_flow.py     config-driven training entry point
+scripts/sample_oxdna_flow.py    checkpoint sampling to NPZ
+scripts/evaluate_oxdna_samples.py generated sample evaluation to JSON
+configs/oxdna.yaml              default short-system training config
+README.md                       user workflow and corrected dataset path
+AGENTS.md                       project rules and fastDNA alignment notes</div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="layout two">
+        <div>
+          <p class="eyebrow">current status</p>
+          <h2>The result is a usable oxBB baseline, not a full final production model.</h2>
+          <ul class="list">
+            <li>The current model is intentionally BBFlow-style, not a vendored protein BBFlow stack.</li>
+            <li>It prioritizes short duplexes and hairpins before full-origami scaling.</li>
+            <li>Energy evaluation is optional and does not block metric reporting.</li>
+            <li>The next strongest checks are smoke training on a filtered small zarr set and sample evaluation against held-out trajectories.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Recommended next run</h3>
+          <div class="codebox">unset PYTHONPATH
+pip install -e ".[dev]"
+python scripts/train_oxdna_flow.py \
+  --config configs/oxdna.yaml \
+  --data_dir /scratch/sroy85/fastDNA/oxdna_zarr_dataset_full \
+  --max_nucleotides 256 \
+  --limit_batches 2 \
+  --epochs 1</div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="controls" aria-label="slide controls">
+      <button id="prev" type="button" aria-label="Previous slide">&lsaquo;</button>
+      <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+      <div>
+        <button id="next" type="button" aria-label="Next slide">&rsaquo;</button>
+        <span class="counter" id="counter"></span>
+      </div>
+    </nav>
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const bar = document.getElementById("bar");
+    const counter = document.getElementById("counter");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    let index = 0;
+
+    function render() {
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      bar.style.width = `${((index + 1) / slides.length) * 100}%`;
+      counter.textContent = `${index + 1}/${slides.length}`;
+      prev.disabled = index === 0;
+      next.disabled = index === slides.length - 1;
+      const hash = `slide-${index + 1}`;
+      if (location.hash.slice(1) !== hash) {
+        history.replaceState(null, "", `#${hash}`);
+      }
+    }
+
+    function go(delta) {
+      index = Math.min(slides.length - 1, Math.max(0, index + delta));
+      render();
+    }
+
+    const hashMatch = location.hash.match(/slide-(\d+)/);
+    if (hashMatch) {
+      index = Math.min(slides.length - 1, Math.max(0, Number(hashMatch[1]) - 1));
+    }
+
+    prev.addEventListener("click", () => go(-1));
+    next.addEventListener("click", () => go(1));
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+        event.preventDefault();
+        go(1);
+      }
+      if (event.key === "ArrowLeft" || event.key === "PageUp") {
+        event.preventDefault();
+        go(-1);
+      }
+      if (event.key === "Home") {
+        index = 0;
+        render();
+      }
+      if (event.key === "End") {
+        index = slides.length - 1;
+        render();
+      }
+    });
+    render();
+  </script>
+</body>
+</html>
